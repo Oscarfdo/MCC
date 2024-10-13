@@ -1,11 +1,11 @@
 /* Oscar Fernando Hernandez Lopez
 14 de octubre del 2024
-TicTacToe.java
+borrador.java
 Juego del gato */
 
 import java.util.ArrayList;
 
-public class TicTacToe {
+public class borrador {
 
     ArrayList<Jugador> jugador = new ArrayList<>(); // Lista dinámica de jugadores
     boolean hayGanador = false;
@@ -14,7 +14,7 @@ public class TicTacToe {
     private Jugador jugador1, jugador2;
 
     // Constructor vacío
-    public TicTacToe() {
+    public borrador() {
         tablero = new char[3][3];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -102,25 +102,21 @@ public class TicTacToe {
 
         // Revisar filas
         for (int i = 0; i < 3; i++) {
-            if (tablero[i][0] == marcaActual && tablero[i][1] == marcaActual &&
-             tablero[i][2] == marcaActual) {
+            if (tablero[i][0] == marcaActual && tablero[i][1] == marcaActual && tablero[i][2] == marcaActual) {
                 return true;
             }
         }
         // Revisar columnas
         for (int i = 0; i < 3; i++) {
-            if (tablero[0][i] == marcaActual && tablero[1][i] == marcaActual && 
-            tablero[2][i] == marcaActual) {
+            if (tablero[0][i] == marcaActual && tablero[1][i] == marcaActual && tablero[2][i] == marcaActual) {
                 return true;
             }
         }
         // Revisar diagonales
-        if (tablero[0][0] == marcaActual && tablero[1][1] == marcaActual && 
-        tablero[2][2] == marcaActual) {
+        if (tablero[0][0] == marcaActual && tablero[1][1] == marcaActual && tablero[2][2] == marcaActual) {
             return true;
         }
-        if (tablero[0][2] == marcaActual && tablero[1][1] == marcaActual && 
-        tablero[2][0] == marcaActual) {
+        if (tablero[0][2] == marcaActual && tablero[1][1] == marcaActual && tablero[2][0] == marcaActual) {
             return true;
         }
         return false;
@@ -147,8 +143,7 @@ public class TicTacToe {
             if (realizarJugada(casilla)) {
                 if (verificarGanador()) {
                     imprimirTablero();
-                    System.out.println("¡El jugador " + 
-                    turnoActual.getnombre() + " ha ganado!");
+                    System.out.println("¡El jugador " + turnoActual.getnombre() + " ha ganado!");
                     hayGanador = true;
                 } else if (verificarEmpate()) {
                     imprimirTablero();
@@ -182,7 +177,7 @@ public class TicTacToe {
     }
 
     public static void main(String[] args) {
-        TicTacToe gato = new TicTacToe(); // Se inicializa con el constructor vacío
+        borrador gato = new borrador(); // Se inicializa con el constructor vacío
         gato.intro(); // Inicializa los jugadores
 
         gato.imprimirVacio();
@@ -191,8 +186,7 @@ public class TicTacToe {
         for (Jugador j : gato.jugador) {
             if (j.getP() == 10) {
                 gato.hayGanador = true;
-                System.out.println(j.getnombre() +
-                 " es el ganador, ¡felicidades!");
+                System.out.println(j.getnombre() + " es el ganador, ¡felicidades!");
                 break; // Romper el bucle si se encuentra un ganador
             }
         }
