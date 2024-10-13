@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 public class TicTacToe {
-
     ArrayList<Jugador> jugador = new ArrayList<>(); // Lista dinámica de jugadores
     boolean hayGanador = false;
     private char[][] tablero;
@@ -30,17 +29,6 @@ public class TicTacToe {
         jugador.add(new Jugador(n, a, t, g, d, e, s));
     }
 
-    public void agregarJugadores() {
-        System.out.println("¿Quieres agregar más jugadores? (si/no)");
-        String respuesta = Keyboard.readString();
-
-        while (respuesta.equalsIgnoreCase("si")) {
-            crearJugador();
-            System.out.println("¿Agregar otro jugador? (si/no)");
-            respuesta = Keyboard.readString();
-        }
-    }
-
     public void intro() {
         System.out.println("Jugador 1...");
         crearJugador();
@@ -51,19 +39,6 @@ public class TicTacToe {
             jugador1 = jugador.get(0);
             jugador2 = jugador.get(1);
             turnoActual = jugador1; // Asegúrate de inicializar el turnoActual
-        }
-    }
-
-    public void imprimirVacio() {
-        for (int i = 0; i < 15; i++) {
-            if (i != 4 || i != 9) {
-                System.out.print("            *");
-                System.out.print("            *");
-                System.out.println("             ");
-            }
-            if (i == 4 || i == 9) {
-                System.out.println("  * * * * * * * * * * * * * * * * * * ");
-            }
         }
     }
 
@@ -196,7 +171,6 @@ public class TicTacToe {
 
         if (seguir.equalsIgnoreCase("si")) {
             continuar = true; // Continuar el juego si la respuesta es "si"
-            crearJugador();
         } else if (seguir.equalsIgnoreCase("no")) {
             continuar = false;
         }
@@ -204,45 +178,52 @@ public class TicTacToe {
     }
 
     public static void main(String[] args) {
-        TicTacToe gato = new TicTacToe();
+    TicTacToe gato = new TicTacToe();
 
-        gato.intro();
+    gato.intro();
 
-        // Obtener los jugadores desde el ArrayList
-        Jugador jugador1 = gato.jugador.get(0);
-        Jugador jugador2 = gato.jugador.get(1);
+    // Bucle para jugar hasta que decidan no continuar
+    boolean seguirJugando = true;
+    while (seguirJugando) {
+        // Inicia una partida
+        gato.jugar();
 
-        // Bucle para jugar hasta que decidan no continuar
-        boolean seguirJugando = true;
-        while (seguirJugando) {
-            // Inicia una partida
-            gato.jugar();
+        // Verificar si algún jugador alcanzó 10 puntos
+        Jugador jugadorGanador = null; // Para guardar el jugador ganador
+        if (gato.jugador.get(0).getP() >= 10) {
+            jugadorGanador = gato.jugador.get(0); // Jugador 1 ganó
+        } else if (gato.jugador.get(1).getP() >= 10) {
+            jugadorGanador = gato.jugador.get(1); // Jugador 2 ganó
+        }
 
-            // Verificar si algún jugador alcanzó 10 puntos
-            if (jugador1.getP() >= 10 || jugador2.getP() >= 10) {
-                // Ejecución de la transición cuando alguno alcanza 10 puntos
-                seguirJugando = gato.transicion();
+        // Si hay un ganador, pregunta si quieren seguir jugando
+        if (jugadorGanador != null) {
+            System.out.println("¡El jugador " + jugadorGanador.getnombre() + " ha ganado!");
+            seguirJugando = gato.transicion();
 
-                // Resetear los puntajes de ambos jugadores si deciden continuar
-                if (seguirJugando) {
-                    jugador1.setP((byte) 0);
-                    jugador2.setP((byte) 0);
-                }
+            if (seguirJugando) {
+                // Reiniciar puntajes a 0
+                gato.jugador.get(0).setP((byte) 0);
+                gato.jugador.get(1).setP((byte) 0);
+
+                gato.crearJugador(); // Registrar un nuevo jugador
+
+                // Cambiar los jugadores para la nueva ronda
+                gato.jugador1 = jugadorGanador; // El jugador ganador anterior
+                gato.jugador2 = gato.jugador.get(gato.jugador.size() - 1); // El nuevo jugador
+                gato.turnoActual = gato.jugador1; // Reiniciar el turno para el nuevo jugador
             }
-
-            // Si deciden no continuar, termina el juego
-            if (!seguirJugando) {
-                jugador1.setP((byte) 0);
-                jugador2.setP((byte) 0);
-                System.out.println("El juego ha terminado.");
-                for (Jugador j : gato.jugador) {
-                System.out.println(j.getnombre() + " - Puntaje: " + j.getP() +
-                ", Partidas Ganadas: " + j.getPG() + ", Partidas Perdidas: " +
-                j.getPP() + ", Partidas Empatadas: " + j.getPE());
-            }
-
-            
-    }
         }
     }
+
+    // Fin del juego
+    System.out.println("El juego ha terminado.");
+    System.out.println(String.format("%-20s %-8s %-16s %-17s %-18s",
+    "NOMBRE", "PUNTAJE", "PARTIDAS GANADAS", "PARTIDAS PERDIDAS",
+    "PARTIDAS EMPATADAS"));
+    for (Jugador j : gato.jugador) {
+        System.out.println(String.format("%-20s %-8s %-16s %-17s %-18s",
+         j.getnombre(),j.getP(), j.getPG(), j.getPP(),  j.getPE()));
+    }
+}
 }
