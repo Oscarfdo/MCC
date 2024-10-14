@@ -82,25 +82,4 @@ public class Jugador{
         this.pE = e;
         this.p = s;
     }
-
-    public void actualizarResultados(Jugador oponente, String resultado) {
-    // resultado puede ser "ganador", "perdedor" o "empate"
-    if (resultado.equals("ganador")) {
-        this.p += 2;
-        this.pG += 1;
-        oponente.p -= 1;
-        oponente.pP += 1;
-    } else if (resultado.equals("perdedor")) {
-        this.p -= 1;
-        this.pP += 1;
-        oponente.p += 2;
-        oponente.pG += 1;
-    } else if (resultado.equals("empate")) {
-        this.pE += 1;
-        oponente.pE += 1;
-    }
-    this.tDP += 1;
-    oponente.tDP += 1;
-}
-
 }
