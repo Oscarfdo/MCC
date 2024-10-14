@@ -1,3 +1,9 @@
+/* Oscar Fernando Hernandez Lopez
+14 de octubre del 2024
+TicTacToe.java
+Juego del gato con sistema de puntuacion
+para varios jugadores */
+
 import java.util.ArrayList;
 
 public class TicTacToe {
@@ -20,7 +26,7 @@ public class TicTacToe {
     public void crearJugador() {
         System.out.println("Introduce tu nombre: ");
         String n = Keyboard.readString();
-        byte a = 1; // Puntos ganados
+        byte a = 1; // Adversarios
         byte t = 0; // Total jugados
         byte g = 0; // Ganados
         byte d = 0; // Derrotas
@@ -164,11 +170,13 @@ public class TicTacToe {
                         // Sumar 2 al ganador
                         turnoActual.setP((byte) (turnoActual.getP() + 5));
                         turnoActual.setPG((byte) (turnoActual.getPG() + 1));
+                        turnoActual.setTDP((byte) (turnoActual.getTDP() + 1));
 
                         // Restar 1 al perdedor
                         Jugador perdedor = (turnoActual == jugador1) ? jugador2 : jugador1;
                         perdedor.setP((byte) (perdedor.getP() - 1));
                         perdedor.setPP((byte) (perdedor.getPP() + 1));
+                        perdedor.setTDP((byte) (perdedor.getTDP() + 1));
 
                         hayGanador = true;
 
@@ -235,7 +243,7 @@ public class TicTacToe {
 
         // Si hay un ganador, pregunta si quieren seguir jugando
         if (jugadorGanador != null) {
-            System.out.println("¡El jugador " + jugadorGanador.getnombre() + " ha ganado!");
+            System.out.println( jugadorGanador.getnombre() + " ha alcanzado 10 puntos!!!");
             seguirJugando = gato.transicion();
 
             if (seguirJugando) {
@@ -249,18 +257,19 @@ public class TicTacToe {
                 gato.jugador1 = jugadorGanador; // El jugador ganador anterior
                 gato.jugador2 = gato.jugador.get(gato.jugador.size() - 1); // El nuevo jugador
                 gato.turnoActual = gato.jugador1; // Reiniciar el turno para el nuevo jugador
+                gato.jugador1.setAdversarios((byte) (gato.jugador1.getAdversarios() + 1));
             }
         }
     }
 
     // Fin del juego
     System.out.println("El juego ha terminado.");
-    System.out.println(String.format("%-20s %-8s %-16s %-17s %-18s",
-    "NOMBRE", "PUNTAJE", "PARTIDAS GANADAS", "PARTIDAS PERDIDAS",
-    "PARTIDAS EMPATADAS"));
+    System.out.println(String.format("%-20s %-11S %-17s %-16s %-17s %-18s %-8s",
+    "NOMBRE","ADVERSARIOS", "TOTAL DE PARTIDAS", "PARTIDAS GANADAS", "PARTIDAS PERDIDAS",
+    "PARTIDAS EMPATADAS", "PUNTAJE"));
     for (Jugador j : gato.jugador) {
-        System.out.println(String.format("%-20s %-8s %-16s %-17s %-18s",
-         j.getnombre(),j.getP(), j.getPG(), j.getPP(),  j.getPE()));
+        System.out.println(String.format("%-20s %-11S %-17s %-16s %-17s %-18s %-8s",
+         j.getnombre(),j.getAdversarios(),j.getTDP(), j.getPG(), j.getPP(),  j.getPE(),j.getP()));
     }
 }
 }
