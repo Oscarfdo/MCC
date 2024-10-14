@@ -43,13 +43,50 @@ public class TicTacToe {
     }
 
     public void imprimirTablero() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                System.out.print(tablero[i][j] + " ");
+    for (int i = 0; i < 3; i++) {
+        // Se imprimen cuatro líneas por cada fila del tablero
+        for (int j = 0; j < 4; j++) {
+            // Primera columna
+            if (tablero[i][0] == 'X' || tablero[i][0] == 'O') {
+                System.out.print(String.format("%-1s %-1s %-1s %-1s %-1s",
+                    tablero[i][0], " ", " ", tablero[i][0], "*"));
+            } else {
+                System.out.print(String.format("%-1s %-1s %-1s %-1s %-1s",
+                    " ", " ", " ", " ", "*"));
+            }
+
+            // Segunda columna
+            if (tablero[i][1] == 'X' || tablero[i][1] == 'O') {
+                System.out.print(String.format("%-1s %-1s %-1s %-1s %-1s",
+                    tablero[i][1], " ", " ", tablero[i][1], "*"));
+            } else {
+                System.out.print(String.format("%-1s %-1s %-1s %-1s %-1s",
+                    " ", " ", " ", " ", "*"));
+            }
+
+            // Tercera columna
+            if (tablero[i][2] == 'X' || tablero[i][2] == 'O') {
+                System.out.print(String.format("%-1s %-1s %-1s %-1s %-1s",
+                    tablero[i][2], " ", " ", tablero[i][2], " "));
+            } else {
+                System.out.print(String.format("%-1s %-1s %-1s %-1s %-1s",
+                    " ", " ", " ", " ", " "));
+            }
+            
+            // Nueva línea para imprimir las siguientes filas vacías o jugadas
+            System.out.println();
+        }
+        
+        // Imprimir línea separadora de asteriscos entre filas
+        if (i < 2) {
+            for (int k = 0; k < 3; k++) {
+                System.out.print(String.format("%-1s %-1s %-1s %-1s %-1s", "*", "*", "*", "*", "*"));
             }
             System.out.println();
         }
     }
+}
+
 
     public boolean realizarJugada(int fila, int columna) {
         if (tablero[fila][columna] == '-') {
