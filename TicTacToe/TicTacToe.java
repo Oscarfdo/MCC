@@ -7,9 +7,10 @@ para varios jugadores */
 import java.util.ArrayList;
 
 public class TicTacToe {
+    
     ArrayList<Jugador> jugador = new ArrayList<>(); // Lista dinámica de jugadores
-    boolean hayGanador = false;
-    private char[][] tablero;
+    private boolean hayGanador = false;
+    public char[][] tablero;
     private Jugador turnoActual; // 'X' para jugador1, 'O' para jugador2
     private Jugador jugador1, jugador2;
 
@@ -23,16 +24,14 @@ public class TicTacToe {
         }
     }
 
+    public char[][] getTablero() {
+        return tablero;
+    }
+
     public void crearJugador() {
         System.out.println("Introduce tu nombre: ");
         String n = Keyboard.readString();
-        byte a = 1; // Adversarios
-        byte t = 0; // Total jugados
-        byte g = 0; // Ganados
-        byte d = 0; // Derrotas
-        byte e = 0; // Empates
-        byte s = 0; // puntaje
-        jugador.add(new Jugador(n, a, t, g, d, e, s));
+        jugador.add(new Jugador(n));
     }
 
     public void intro() {
@@ -94,12 +93,14 @@ public class TicTacToe {
 }
 
 
-    public boolean realizarJugada(int fila, int columna) {
+    public boolean realizarJugada (int fila, int columna) {
+        boolean jugExit = false;
+
         if (tablero[fila][columna] == '-') {
             tablero[fila][columna] = (turnoActual == jugador1) ? 'X' : 'O';
-            return true;
+            jugExit =  true;
         }
-        return false; // Casilla ya ocupada
+        return jugExit; // Casilla ya ocupada
     }
 
     private void cambiarTurno() {
@@ -108,27 +109,28 @@ public class TicTacToe {
 
     public boolean verificarGanador() {
         char marcaActual = (turnoActual == jugador1) ? 'X' : 'O';
+        boolean ver = false;
 
         // Revisar filas
         for (int i = 0; i < 3; i++) {
             if (tablero[i][0] == marcaActual && tablero[i][1] == marcaActual && tablero[i][2] == marcaActual) {
-                return true;
+                ver = true;
             }
         }
         // Revisar columnas
         for (int i = 0; i < 3; i++) {
             if (tablero[0][i] == marcaActual && tablero[1][i] == marcaActual && tablero[2][i] == marcaActual) {
-                return true;
+                ver = true;
             }
         }
         // Revisar diagonales
         if (tablero[0][0] == marcaActual && tablero[1][1] == marcaActual && tablero[2][2] == marcaActual) {
-            return true;
+            ver = true;
         }
         if (tablero[0][2] == marcaActual && tablero[1][1] == marcaActual && tablero[2][0] == marcaActual) {
-            return true;
+            ver = true;
         }
-        return false;
+        return ver;
     }
 
     public boolean verificarEmpate() {
@@ -143,6 +145,8 @@ public class TicTacToe {
     }
 
     public void jugar() {
+        Gato gato = new Gato(); // Crear una instancia de Gato
+
         while (jugador1.getP() < 10 && jugador2.getP() < 10) {
             hayGanador = false; // Resetear el estado de ganador para cada nueva partida
             turnoActual = jugador1; // Reiniciar el turno para empezar siempre con el jugador 1
@@ -155,7 +159,10 @@ public class TicTacToe {
             }
 
             while (!hayGanador) {
-                imprimirTablero();
+                //imprimirTablero();
+                gato.fillBoard(gato.board, this); // O el método que uses para llenar el tablero
+                gato.printBoard(gato.board);
+                
                 System.out.println("Turno del jugador " + turnoActual.getnombre());
                 System.out.print("Ingrese el número de la casilla (1-9): ");
                 int casilla = Keyboard.readInt();
@@ -164,19 +171,29 @@ public class TicTacToe {
 
                 if (realizarJugada(fila, columna)) {
                     if (verificarGanador()) {
-                        imprimirTablero();
-                        System.out.println("¡El jugador " + turnoActual.getnombre() + " ha ganado esta partida!");
+                        //imprimirTablero();
+                        gato.fillBoard(gato.board, this); // O el método que uses para llenar el tablero
+                        gato.printBoard(gato.board);
+                        System.out.println("¡El jugador " +
+                         turnoActual.getnombre() + " ha ganado esta partida!");
 
                         // Sumar 2 al ganador
-                        turnoActual.setP((byte) (turnoActual.getP() + 5));
-                        turnoActual.setPG((byte) (turnoActual.getPG() + 1));
-                        turnoActual.setTDP((byte) (turnoActual.getTDP() + 1));
+                        //turnoActual.setP((byte) (turnoActual.getP() + 5));
+                        //turnoActual.setPG((byte) (turnoActual.getPG() + 1));
+                        //turnoActual.setTDP((byte) (turnoActual.getTDP() + 1));
+                        turnoActual.incrementarP((byte) 5);
+                        turnoActual.incrementarPG((byte) 1);
+                        turnoActual.incrementarTDP((byte) 1);
 
                         // Restar 1 al perdedor
                         Jugador perdedor = (turnoActual == jugador1) ? jugador2 : jugador1;
-                        perdedor.setP((byte) (perdedor.getP() - 1));
-                        perdedor.setPP((byte) (perdedor.getPP() + 1));
-                        perdedor.setTDP((byte) (perdedor.getTDP() + 1));
+                        //perdedor.setP((byte) (perdedor.getP() - 1));
+                        //perdedor.setPP((byte) (perdedor.getPP() + 1));
+                        //perdedor.setTDP((byte) (perdedor.getTDP() + 1));
+                        perdedor.decrementarP((byte) 1);
+                        perdedor.incerementarPP((byte) 1);
+                        perdedor.incrementarTDP((byte) 1);
+
 
                         hayGanador = true;
 
@@ -185,12 +202,16 @@ public class TicTacToe {
                             return; // Interrumpe el método jugar
                         }
                     } else if (verificarEmpate()) {
-                        imprimirTablero();
+                        //imprimirTablero();
+                        gato.fillBoard(gato.board, this); // O el método que uses para llenar el tablero
+                        gato.printBoard(gato.board);
                         System.out.println("¡Es un empate!");
 
                         // Incrementar el contador de empates para ambos jugadores
-                        jugador1.setPE((byte) (jugador1.getPE() + 1));
-                        jugador2.setPE((byte) (jugador2.getPE() + 1));
+                        //jugador1.setPE((byte) (jugador1.getPE() + 1));
+                        //jugador2.setPE((byte) (jugador2.getPE() + 1));
+                        jugador1.incrementarPE((byte) 1);
+                        jugador2.incrementarPE((byte) 1);
 
                         hayGanador = true;
                     } else {
@@ -235,11 +256,12 @@ public class TicTacToe {
 
         // Verificar si algún jugador alcanzó 10 puntos
         Jugador jugadorGanador = null; // Para guardar el jugador ganador
-        if (gato.jugador.get(0).getP() >= 10) {
-            jugadorGanador = gato.jugador.get(0); // Jugador 1 ganó
-        } else if (gato.jugador.get(1).getP() >= 10) {
-            jugadorGanador = gato.jugador.get(1); // Jugador 2 ganó
-        }
+        for (Jugador j : gato.jugador) {
+            if (j.getP() >= 10) {
+            jugadorGanador = j; // El jugador ha ganado
+            break; // Salir del bucle una vez encontrado el ganador
+    }
+}
 
         // Si hay un ganador, pregunta si quieren seguir jugando
         if (jugadorGanador != null) {
@@ -248,8 +270,8 @@ public class TicTacToe {
 
             if (seguirJugando) {
                 // Reiniciar puntajes a 0
-                gato.jugador.get(0).setP((byte) 0);
-                gato.jugador.get(1).setP((byte) 0);
+                //gato.jugador.get(0).setP((byte) 0);
+                //gato.jugador.get(1).setP((byte) 0);
 
                 gato.crearJugador(); // Registrar un nuevo jugador
 
@@ -257,7 +279,9 @@ public class TicTacToe {
                 gato.jugador1 = jugadorGanador; // El jugador ganador anterior
                 gato.jugador2 = gato.jugador.get(gato.jugador.size() - 1); // El nuevo jugador
                 gato.turnoActual = gato.jugador1; // Reiniciar el turno para el nuevo jugador
-                gato.jugador1.setAdversarios((byte) (gato.jugador1.getAdversarios() + 1));
+                //gato.jugador1.setAdversarios((byte) (gato.jugador1.getAdversarios() + 1));
+                gato.jugador1.incrementarAd((byte) 1);
+                gato.jugador1.reinicio();
             }
         }
     }
