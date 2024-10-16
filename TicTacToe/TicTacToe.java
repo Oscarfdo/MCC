@@ -28,6 +28,14 @@ public class TicTacToe {
         return tablero;
     }
 
+    public void vaciarTablero(){
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    tablero[i][j] = '-'; // Inicializa todas las casillas vacías
+                }
+            }
+    }
+
     public void crearJugador() {
         System.out.println("Introduce tu nombre: ");
         String n = Keyboard.readString();
@@ -101,20 +109,18 @@ public class TicTacToe {
     public void jugar() {
         Gato gato = new Gato(); 
 
+        gato.formaInicial(gato.board, this);
+        gato.printBoard(gato.board);
+
         while (jugador1.getP() < 10 && jugador2.getP() < 10) {
             hayGanador = false; 
             turnoActual = jugador1; // Reiniciar el turno para empezar siempre con el jugador 1
 
-            // Inicializar un tablero vacío para cada partida
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    tablero[i][j] = '-'; // Inicializa todas las casillas vacías
-                }
-            }
+            vaciarTablero();
 
             while (!hayGanador) {
-                gato.fillBoard(gato.board, this); 
-                gato.printBoard(gato.board);
+               
+                
                 
                 System.out.println("Turno del jugador " + turnoActual.getnombre());
                 System.out.print("Ingrese el número de la casilla (1-9): ");
@@ -161,6 +167,8 @@ public class TicTacToe {
                         hayGanador = true;
                     } else {
                         cambiarTurno();
+                        gato.fillBoard(gato.board, this);
+                        gato.printBoard(gato.board);
                     }
                 } else {
                     System.out.println("Casilla ocupada, elija otra.");
@@ -170,6 +178,11 @@ public class TicTacToe {
             // Mostrar los puntajes actuales después de cada partida
             System.out.println(jugador1.getnombre() + " - Puntaje: " + jugador1.getP());
             System.out.println(jugador2.getnombre() + " - Puntaje: " + jugador2.getP());
+
+             // Inicializar un tablero vacío para cada partida
+            vaciarTablero();
+            gato.fillBoard(gato.board, this);
+            gato.printBoard(gato.board);
         }
     }
 
