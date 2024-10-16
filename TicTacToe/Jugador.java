@@ -12,6 +12,7 @@ public class Jugador{
     private byte pE; // Partidas Empatadas
     private byte p; //Puntaje
 
+    // Metodos para obtener datos sobre el jugador
     public String getnombre(){
         return nombre;
     }
@@ -44,6 +45,7 @@ public class Jugador{
         adversarios += nAdversarios;
     }
 
+    // Metodos para incrementar valores a los datos del jugador
     public void incrementarTDP(byte nTDP){
         tDP += nTDP;
     }
@@ -68,7 +70,7 @@ public class Jugador{
         p -=nP;
     }
 
-    public void reinicio(){
+    public void reinicio(){// Metodo para reiniciar todos los datos
 
         tDP = 0;
         pG = 0;
@@ -78,11 +80,11 @@ public class Jugador{
     }
     
     @Override
-    public String toString(){
+    public String toString(){ // Metodo toString
         return nombre + adversarios + tDP + pG + pP + pE + p;
     }
 
-    public Jugador (String n){
+    public Jugador (String n){// Constructos de la Clase Jugador
         this.nombre = n;
         this.adversarios = 1;
         this.tDP = 0;
