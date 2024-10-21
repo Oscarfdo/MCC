@@ -37,6 +37,14 @@ public class TridTicTacToe {
         {"-", "-", "-", "-"}
     };
 
+    int[][] posicionesGanadoras = {
+    {0, 0, 0},
+    {0, 1, 0},
+    {0, 2, 0},
+    {0, 3, 0}
+    };
+
+
     public void crearJugador() {
         System.out.println("Introduce tu nombre: ");
         String n = Keyboard.readString();
@@ -55,6 +63,35 @@ public class TridTicTacToe {
             turnoActual = jugador1;
         }
     }
+
+    public Jugador elegirJugadorInicial(Jugador jugador1, Jugador jugador2) {
+        System.out.println("Seleccione quién será el jugador inicial:");
+        System.out.println("1. " + jugador1.getnombre());
+        System.out.println("2. " + jugador2.getnombre());
+        
+        int opcion = -1;
+        do {
+            System.out.print("Ingrese 1 o 2: ");
+            opcion = Keyboard.readInt(); // Utilizando la clase Keyboard para leer la entrada del usuario
+        } while (opcion != 1 && opcion != 2);
+        
+        return (opcion == 1) ? jugador1 : jugador2;
+    }
+
+    public String elegirFicha() {
+        System.out.println("Seleccione su ficha:");
+        System.out.println("1. X");
+        System.out.println("2. O");
+        
+        int opcion = -1;
+        do {
+            System.out.print("Ingrese 1 para X o 2 para O: ");
+            opcion = Keyboard.readInt(); // Usar la clase Keyboard para leer la entrada del usuario
+        } while (opcion != 1 && opcion != 2);
+        
+        return (opcion == 1) ? "X" : "O";
+    }
+
 
     public boolean realizarJugada(int fila, int columna, int capa) {
         boolean jugExit = false;
@@ -178,18 +215,18 @@ public class TridTicTacToe {
                 }
             //Diagonales
             if(verificarDiagonalPrincipal(tab1, marcaActual)||
-               verificarDiagonalSecundaria(tab1, marcaActual)||
-               verificarDiagonalPrincipal(tab2, marcaActual)||
-               verificarDiagonalSecundaria(tab2, marcaActual)||
-               verificarDiagonalPrincipal(tab3, marcaActual)||
-               verificarDiagonalSecundaria(tab3, marcaActual)||
-               verificarDiagonalPrincipal(tab4, marcaActual)||
-               verificarDiagonalSecundaria(tab4, marcaActual)){
+                verificarDiagonalSecundaria(tab1, marcaActual)||
+                verificarDiagonalPrincipal(tab2, marcaActual)||
+                verificarDiagonalSecundaria(tab2, marcaActual)||
+                verificarDiagonalPrincipal(tab3, marcaActual)||
+                verificarDiagonalSecundaria(tab3, marcaActual)||
+                verificarDiagonalPrincipal(tab4, marcaActual)||
+                verificarDiagonalSecundaria(tab4, marcaActual)){
                 ganador = true;
                }
         }
 
-        //Fondo
+            //Fondo
             for (int j = 0; j < 4; j++) {
                 for (int k = 0; k < 4; k++) {
                     if (verificarFondo(j, k, marcaActual)) {
@@ -245,6 +282,19 @@ public class TridTicTacToe {
         intro();
         cuadricula();
 
+        Jugador jugadorInicial = elegirJugadorInicial(jugador1, jugador2);
+        System.out.println("El jugador que inicia es: " + jugadorInicial.getnombre());
+
+         String fichaInicial = elegirFicha();
+        System.out.println(jugadorInicial.getnombre() + " ha elegido la ficha: " + fichaInicial);
+    
+        // Asignar la ficha al otro jugador
+        Jugador jugadorSegundo = (jugadorInicial == jugador1) ? jugador2 : jugador1;
+        String fichaSegundo = fichaInicial.equals("X") ? "O" : "X";
+        System.out.println(jugadorSegundo.getnombre() + " tendrá la ficha: " + fichaSegundo);
+    
+    
+
         while (true) {
             System.out.println("Turno del jugador " + turnoActual.getnombre());
             System.out.print("Ingrese la fila (1-4): ");
@@ -260,6 +310,12 @@ public class TridTicTacToe {
 
                 if (verificarGanador()) {
                     System.out.println("¡El jugador " + turnoActual.getnombre() + " ha ganado!");
+                    System.out.println("Posiciones de la línea ganadora: ");
+                    for (int i = 0; i < 4; i++) {
+                    System.out.println("(" + posicionesGanadoras[i][0] + ", " 
+                           + posicionesGanadoras[i][1] + ", " 
+                           + posicionesGanadoras[i][2] + ")");
+                            }
                     break;
                 } else if (verificarEmpate()) {
                     System.out.println("¡Es un empate!");
