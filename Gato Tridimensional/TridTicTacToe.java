@@ -1,4 +1,8 @@
-
+/* Oscar Fernando Hernandez Lopez
+14 de octubre del 2024
+TridTicTacToe.java
+Juego del gato en 3 dimensiones
+para 2 jugadores */
 import java.util.ArrayList;
 
 public class TridTicTacToe {
@@ -69,10 +73,10 @@ public class TridTicTacToe {
         System.out.println("1. " + jugador1.getnombre());
         System.out.println("2. " + jugador2.getnombre());
         
-        int opcion = -1;
+        int opcion;
         do {
             System.out.print("Ingrese 1 o 2: ");
-            opcion = Keyboard.readInt(); // Utilizando la clase Keyboard para leer la entrada del usuario
+            opcion = Keyboard.readInt(); 
         } while (opcion != 1 && opcion != 2);
         
         return (opcion == 1) ? jugador1 : jugador2;
@@ -86,7 +90,7 @@ public class TridTicTacToe {
         int opcion = -1;
         do {
             System.out.print("Ingrese 1 para X o 2 para O: ");
-            opcion = Keyboard.readInt(); // Usar la clase Keyboard para leer la entrada del usuario
+            opcion = Keyboard.readInt(); 
         } while (opcion != 1 && opcion != 2);
         
         return (opcion == 1) ? "X" : "O";
@@ -256,7 +260,7 @@ public class TridTicTacToe {
         if (verificarDiagonalSecundariaFondo(marcaActual)) {
             ganador = true;
         }
-        // Aquí se pueden agregar más verificaciones para otras combinaciones en 3D
+        
         return ganador;
     }
 
@@ -279,13 +283,11 @@ public class TridTicTacToe {
     }
 
     public void jugar() {
-        intro();
-        cuadricula();
-
+       
         Jugador jugadorInicial = elegirJugadorInicial(jugador1, jugador2);
         System.out.println("El jugador que inicia es: " + jugadorInicial.getnombre());
 
-         String fichaInicial = elegirFicha();
+        String fichaInicial = elegirFicha();
         System.out.println(jugadorInicial.getnombre() + " ha elegido la ficha: " + fichaInicial);
     
         // Asignar la ficha al otro jugador
@@ -330,8 +332,8 @@ public class TridTicTacToe {
     }
 
     public void cuadricula() {
-        // Mantener el método cuadricula sin cambios
-        // El código original se queda aquí
+       
+        
         System.out.print("   "); // Espacio para la esquina superior izquierda
         for(int k = 0; k < 4; k++){
             for (int i = 0; i < 4; i++) {
@@ -396,6 +398,8 @@ public class TridTicTacToe {
 
     public static void main(String[] args) {
         TridTicTacToe juego = new TridTicTacToe();
+        juego.intro();
+        juego.cuadricula();
         juego.jugar();
     }
 }
