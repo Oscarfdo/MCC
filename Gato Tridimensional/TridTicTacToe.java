@@ -3,6 +3,7 @@
 TridTicTacToe.java
 Juego del gato en 3 dimensiones
 para 2 jugadores */
+
 import java.util.ArrayList;
 
 public class TridTicTacToe {
@@ -49,15 +50,17 @@ public class TridTicTacToe {
     };
 
 
-    public void crearJugador() {
+    public void crearJugador() { //void -> Jugador
         System.out.println("Introduce tu nombre: ");
         String n = Keyboard.readString();
         jugador.add(new Jugador(n));
+        //return new jugador;
     }
 
     public void intro() {
         System.out.println("Jugador 1...");
         crearJugador();
+        //jugador.add(crearJugador());
         System.out.println("Jugador 2...");
         crearJugador();
 
@@ -334,7 +337,7 @@ public class TridTicTacToe {
     public void cuadricula() {
        
         
-        System.out.print("   "); // Espacio para la esquina superior izquierda
+        System.out.print("   "); 
         for(int k = 0; k < 4; k++){
             for (int i = 0; i < 4; i++) {
                 System.out.print(String.format("%-5s", "  "+ (i + 1)));   

@@ -2,6 +2,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hand {
+
+    /* Se declara como List por mero habito
+    en caso de querer usar LinkedList, en este
+    caso no se usará
+    */
     private List<Cards> cartas;
 
     public Hand() {
@@ -16,7 +21,6 @@ public class Hand {
     public List<Cards> getCartas() {
     return cartas;
     }
-
 
     // Calcular el valor total de la mano (considerando la regla del As)
     public int calcularValor() {
