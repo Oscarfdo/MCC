@@ -1,29 +1,29 @@
+/* Oscar Fernando Hernandez Lopez
+30 de octubre del 2024
+Hand.java
+Clase para que cada jugador 
+cuente con su mano*/
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Hand {
 
-    /* Se declara como List por mero habito
-    en caso de querer usar LinkedList, en este
-    caso no se usará
-    */
-    private List<Cards> cartas;
+    private List<Cards> cartas; //Lista para las cartas de la mano
 
-    public Hand() {
+    public Hand() { //Constructor de la clase
         cartas = new ArrayList<>();
     }
 
-    // Añadir una carta a la mano
-    public void agregarCarta(Cards carta) {
+    public void agregarCarta(Cards carta) {//Metodo para agregar un carta a la mano
         cartas.add(carta);
     }
 
-    public List<Cards> getCartas() {
+    public List<Cards> getCartas() {//Lista para obtener la lista de cartas
     return cartas;
     }
 
-    // Calcular el valor total de la mano (considerando la regla del As)
-    public int calcularValor() {
+    public int calcularValor() { //Metodo para calcular el valor de la mano
         int valor = 0;
         int ases = 0;
 
@@ -34,8 +34,7 @@ public class Hand {
             }
         }
 
-        // Ajustar el valor si hay Ases para no pasarse de 21
-        while (valor > 21 && ases > 0) {
+        while (valor > 21 && ases > 0) {//Se ajusta el valor en caso de haber una A
             valor -= 10;
             ases--;
         }
@@ -43,9 +42,9 @@ public class Hand {
         return valor;
     }
 
-    // Mostrar las cartas de la mano
+ 
     @Override
-    public String toString() {
+    public String toString() {//Metodo toString de la clase
         return cartas.toString();
     }
 }

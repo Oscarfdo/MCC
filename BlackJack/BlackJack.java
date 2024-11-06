@@ -2,7 +2,7 @@
 30 de octubre del 2024
 BlackJack.java
 Juego BlackJack 
-para 1 jugadores vs maquina*/
+para 1 jugador vs maquina*/
 import java.util.List;
 
 
@@ -11,7 +11,7 @@ public class BlackJack {
     private Player jugador;
     private Player crupier;
 
-    public BlackJack() {
+    public BlackJack() {//Constructor de la clase
         mazo = new Deck();
         crupier = new Player("Crupier");
 
@@ -20,23 +20,21 @@ public class BlackJack {
         jugador = new Player(nombreJugador);
     }
 
-   public void jugar() {
+   public void jugar() {//Metodo para la estructura principal del juego
     
-
-    // Repartir dos cartas al jugador y al crupier al comienzo
-        jugador.recibirCarta(mazo.repartirCarta());
-        jugador.recibirCarta(mazo.repartirCarta());
+        jugador.recibirCarta(mazo.repartirCarta());// Se reparten dos cartas
+        jugador.recibirCarta(mazo.repartirCarta());//para cada uno
         crupier.recibirCarta(mazo.repartirCarta());
         crupier.recibirCarta(mazo.repartirCarta());
 
-        System.out.println("Cartas del Jugador:");
+        System.out.println("Cartas del Jugador:");//Se muestra mano del jugador
         imprimirCartas(jugador.getMano().getCartas());
 
-        System.out.println("Cartas del Crupier:");
-        imprimirCartasCrupierOcultas(crupier.getMano().getCartas());
+        System.out.println("Cartas del Crupier:");//Solo se muestra la primera carta 
+        imprimirCartasOcultas(crupier.getMano().getCartas());//del crupier
 
-        // Turno del jugador
-        while (jugador.obtenerValorMano() < 21) {
+        
+        while (jugador.obtenerValorMano() < 21) {//Ciclo para que el jugador arme su mano
             System.out.println("¿Quieres otra carta? (Si/No)");
             String respuesta = Keyboard.readString();
 
@@ -49,21 +47,16 @@ public class BlackJack {
             }
         }
 
-        // Turno del crupier: Pedir cartas hasta llegar a 17 o más
-        while (crupier.obtenerValorMano() < 17) {
-            crupier.recibirCarta(mazo.repartirCarta());
+        while (crupier.obtenerValorMano() < 17) {//Ciclo para que el Crupier arme su mano
+            crupier.recibirCarta(mazo.repartirCarta());//hasta llegar a 17
         }
 
-        // Revelar todas las cartas del crupier al final del juego
-        System.out.println("Cartas del Crupier:");
+        System.out.println("Cartas del Crupier:");//Mostrar mazo completo de Crupier
         imprimirCartas(crupier.getMano().getCartas());
-
-        // Determinar el ganador
-        determinarGanador();
     }
 
 
-    private void determinarGanador() {
+    private void determinarGanador() {//Metodo para saber si hay ganador
         int valorJugador = jugador.obtenerValorMano();
         int valorCrupier = crupier.obtenerValorMano();
 
@@ -85,10 +78,8 @@ public class BlackJack {
 
 
 //Empieza codigo de formato
-
-// Mostrar solo la primera carta del crupier, ocultando las demás.
-    private void imprimirCartasCrupierOcultas(List<Cards> mano) {
-        for (int i = 0; i < mano.size(); i++) {
+    private void imprimirCartasOcultas(List<Cards> mano) {//Metodo para mostrar solo la 
+        for (int i = 0; i < mano.size(); i++) {           //primera carta del crupier
             System.out.print("╭-----╮   ");
         }
         System.out.println();
@@ -126,9 +117,9 @@ public class BlackJack {
         System.out.println();
     }
 
-    // Mostrar todas las cartas del crupier al final del juego.
-    private void imprimirCartas(List<Cards> mano) {
-        int numCartas = mano.size();
+   
+    private void imprimirCartas(List<Cards> mano) {//Metodo para mostrar las cartas
+        int numCartas = mano.size();               //de la mano de un jugador
 
         for (int i = 0; i < numCartas; i++) {
             System.out.print("╭-----╮   ");
@@ -158,8 +149,9 @@ public class BlackJack {
 
 
     public static void main(String[] args) {
-        System.out.println("¡Bienvenido al juego de BlackJack!");
+        System.out.println("BlackJack...");
         BlackJack juego = new BlackJack();
         juego.jugar();
+        juego.determinarGanador();
     }
 }
