@@ -15,12 +15,13 @@ public class Hand {
         cartas = new ArrayList<>();
     }
 
-    public void agregarCarta(Cards carta) {//Metodo para agregar un carta a la mano
-        cartas.add(carta);
-    }
-
+   
     public List<Cards> getCartas() {//Lista para obtener la lista de cartas
     return cartas;
+    }
+
+    public void agregarCarta(Cards carta) {//Metodo para agregar un carta a la mano
+        cartas.add(carta);
     }
 
     public int calcularValor() { //Metodo para calcular el valor de la mano

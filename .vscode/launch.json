@@ -6,6 +6,15 @@
     "configurations": [
         
         {
+            "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "Main", // Cambia esto por el nombre de tu clase principal
+            "classPaths": ["libs/jFuzzyLogic.jar"]
+          },
+          
+        
+        {
             "type": "jdk",
             "request": "launch",
             "name": "Launch Java App"

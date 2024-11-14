@@ -7,7 +7,7 @@ elementos de una baraja*/
 
 public enum Cards {
     
-    AS_CORAZONES("As", "♥", 11),// Corazones
+    AS_CORAZONES("A", "♥", 11),// Corazones as debe valer 1
     DOS_CORAZONES("2", "♥", 2),
     TRES_CORAZONES("3", "♥", 3),
     CUATRO_CORAZONES("4", "♥", 4),
@@ -22,7 +22,7 @@ public enum Cards {
     REY_CORAZONES("K", "♥", 10),
 
 
-    AS_PICAS("As", "♠", 11),// Picas
+    AS_PICAS("A", "♠", 11),// Picas
     DOS_PICAS("2", "♠", 2),
     TRES_PICAS("3", "♠", 3),
     CUATRO_PICAS("4", "♠", 4),
@@ -37,7 +37,7 @@ public enum Cards {
     REY_PICAS("K", "♠", 10),
 
 
-    AS_DIAMANTES("As", "♦", 11),// Diamantes
+    AS_DIAMANTES("A", "♦", 11),// Diamantes
     DOS_DIAMANTES("2", "♦", 2),
     TRES_DIAMANTES("3", "♦", 3),
     CUATRO_DIAMANTES("4", "♦", 4),
@@ -52,7 +52,7 @@ public enum Cards {
     REY_DIAMANTES("K", "♦", 10),
 
 
-    AS_TREBOLES("As", "♣", 11),// Tréboles
+    AS_TREBOLES("A", "♣", 11),// Tréboles
     DOS_TREBOLES("2", "♣", 2),
     TRES_TREBOLES("3", "♣", 3),
     CUATRO_TREBOLES("4", "♣", 4),

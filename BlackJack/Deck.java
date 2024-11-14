@@ -15,7 +15,7 @@ public class Deck {
         for (Cards carta : Cards.values()) {
             mazo.add(carta);
         }
-        mezclar();  
+        mezclar();  //instruccion directa 
     }
 
   
