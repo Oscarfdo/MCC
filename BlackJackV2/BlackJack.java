@@ -1,7 +1,7 @@
 public class BlackJack{
 
-    Jugador jugador;
-    Jugador croupier;
+    private static Jugador jugador;
+    private static Jugador croupier;
     private Mazo mazo;
 
     public BlackJack(){
@@ -19,26 +19,23 @@ public class BlackJack{
 
     public void jugar(){
         
-
-        croupier.agregarCarta(mazo.repartirCarta());
-        jugador.agregarCarta(mazo.repartirCarta());
-        
-
+        croupier.recibirCarta(mazo.repartirCarta());
+        croupier.recibirCarta(mazo.repartirCarta());
+        jugador.recibirCarta(mazo.repartirCarta());
+        jugador.recibirCarta(mazo.repartirCarta());
         
     }
 
     public static void main(String[] args){
         Mazo mazo = new Mazo();
-   
-        
+
         BlackJack juego = new BlackJack();
 
-        System.out.println(mazo);
-        
         mazo.Barajear();
         System.out.println("Mazo barajeado");
 
-        System.out.println(mazo);
+        System.out.println(croupier);
+        System.out.println(jugador);
 
    
     }

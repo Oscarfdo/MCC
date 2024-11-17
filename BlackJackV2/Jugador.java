@@ -1,9 +1,15 @@
+
+
 public class Jugador{
 
     private String nombre; //Atributos de la clase
     private int fichas;
     private int puntaje;
     private Mano mano;
+
+    public Jugador(){
+        
+    }
 
     public Jugador (String nombre){ //Construtor de la clase
         this.nombre = nombre;
@@ -36,11 +42,15 @@ public class Jugador{
         return 
     } */
 
+   public void recibirCarta(Baraja carta){
+    mano.agregarCarta(carta);
+   }
+
     public int reiniciarPuntaje(){ //Metodo para reiniciar el puntaje a 0
         return puntaje = 0;
     }
 
     public String toString(){ //Metodo toString de la clase
-        return nombre + fichas + puntaje;
+        return nombre + fichas + puntaje + mano.toString();
     }
 }
