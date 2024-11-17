@@ -11,9 +11,9 @@ VAR_OUTPUT
 END_VAR
 
 FUZZIFY time
-    TERM short := (0, 1) (5, 0);    // Poco tiempo es ideal
-    TERM medium := (3, 0) (7, 1) (10, 0);
-    TERM long := (7, 0) (15, 1);    // Mucho tiempo es menos deseable
+    TERM short := (0, 1) (20, 0);        // Rápido (idealmente hasta 20 segundos)
+    TERM medium := (15, 0) (25, 1) (35, 0);  // Promedio (entre 20 y 30 segundos)
+    TERM long := (30, 0) (50, 1);        // Lento (30 segundos en adelante)
 END_FUZZIFY
 
 FUZZIFY mistakes

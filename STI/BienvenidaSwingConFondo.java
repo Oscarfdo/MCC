@@ -9,7 +9,6 @@ public class BienvenidaSwingConFondo extends JFrame {
     private JLabel mensaje;
     private JLabel etiquetaPregunta;
     private JLabel etiquetaRespuestaIncorrecta;
-    private JLabel etiquetaTimer;
     private int respuestaCorrectaNumerador;
     private int respuestaCorrectaDenominador;
     private double respuestaCorrecta;
@@ -18,6 +17,9 @@ public class BienvenidaSwingConFondo extends JFrame {
     private int segundosTranscurridos;
     private int errores;
     private int ayudas;
+    private int nivelActual = 0; // Nivel inicial (0: básico, 1: intermedio, 2: avanzado)
+    private int respuestasConsecutivas = 0; // Contador para avanzar de nivel
+    private int retrocesosConsecutivos = 0; // Contador para retroceder de nivel
 
     public BienvenidaSwingConFondo() {
         setTitle("Aprender a Sumar");
@@ -46,44 +48,32 @@ public class BienvenidaSwingConFondo extends JFrame {
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
         panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        panelCentral.add(Box.createRigidArea(new Dimension(0, 20)));
-
         mensaje = new JLabel("¡Vamos a aprender a sumar!");
         mensaje.setFont(new Font("Arial", Font.BOLD, 24));
         mensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(mensaje);
 
-        panelCentral.add(Box.createRigidArea(new Dimension(0, 50)));
-
-        JPanel panelBoton = new JPanel();
-        panelBoton.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        panelBoton.setOpaque(false);
-
         botonInicio = new JButton("Inicio");
         botonInicio.setFont(new Font("Arial", Font.PLAIN, 18));
         botonInicio.setPreferredSize(new Dimension(100, 40));
-        botonInicio.setBackground(new Color(255, 182, 193));
-        botonInicio.setFocusPainted(false);
-        botonInicio.addActionListener(e -> mostrarPregunta(0)); // Nivel inicial bajo
-
-        panelBoton.add(botonInicio);
-        panelCentral.add(panelBoton);
+        botonInicio.setBackground(new Color(255, 182, 193)); // Fondo rosado
+        botonInicio.setFocusPainted(false); // Sin contorno al hacer clic
+        botonInicio.addActionListener(e -> mostrarPregunta());
+        panelCentral.add(Box.createRigidArea(new Dimension(0, 50)));
+        panelCentral.add(botonInicio);
 
         panelFondo.add(panelCentral);
         setVisible(true);
     }
 
-    private void mostrarPregunta(double nivel) {
+    private void mostrarPregunta() {
         panelCentral.removeAll();
-
         iniciarCronometro();
 
-        String pregunta = "";
-
-        // Decidir el tipo de pregunta según el nivel
-        if (nivel < 3) {
+        String pregunta;
+        if (nivelActual == 0) {
             pregunta = generarPreguntaSimple();
-        } else if (nivel < 6) {
+        } else if (nivelActual == 1) {
             pregunta = generarPreguntaDecimal();
         } else {
             pregunta = generarPreguntaFraccion();
@@ -98,22 +88,23 @@ public class BienvenidaSwingConFondo extends JFrame {
         JTextField campoRespuesta = new JTextField();
         campoRespuesta.setMaximumSize(new Dimension(200, 30));
         campoRespuesta.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
         panelCentral.add(campoRespuesta);
 
         etiquetaRespuestaIncorrecta = new JLabel(" ");
         etiquetaRespuestaIncorrecta.setForeground(Color.RED);
         etiquetaRespuestaIncorrecta.setAlignmentX(Component.CENTER_ALIGNMENT);
-        etiquetaRespuestaIncorrecta.setPreferredSize(new Dimension(200, 20));
         panelCentral.add(etiquetaRespuestaIncorrecta);
 
         JButton botonEnviar = new JButton("Enviar");
         botonEnviar.setFont(new Font("Arial", Font.PLAIN, 18));
+        botonEnviar.setBackground(new Color(255, 182, 193)); // Fondo rosado
+        botonEnviar.setFocusPainted(false);
         botonEnviar.setAlignmentX(Component.CENTER_ALIGNMENT);
         botonEnviar.addActionListener(ev -> {
             verificarRespuesta(campoRespuesta.getText());
-            double nuevoNivel = evaluarSistemaDifuso();
-            mostrarPregunta(nuevoNivel); // Mostrar nueva pregunta con el nivel actualizado
+            double nivelDifuso = evaluarSistemaDifuso();
+            manejarProgresion(nivelDifuso);
+            mostrarPregunta();
         });
         panelCentral.add(botonEnviar);
 
@@ -130,12 +121,13 @@ public class BienvenidaSwingConFondo extends JFrame {
     }
 
     private String generarPreguntaDecimal() {
-        Random random = new Random();
-        double numero1 = Math.round((random.nextDouble() * 10 + 1) * 100.0) / 100.0;
-        double numero2 = Math.round((random.nextDouble() * 10 + 1) * 100.0) / 100.0;
-        respuestaCorrecta = numero1 + numero2;
-        return "¿Cuánto es " + numero1 + " + " + numero2 + "?";
-    }
+    Random random = new Random();
+    double numero1 = Math.round((random.nextDouble() * 10 + 1) * 10.0) / 10.0; // Redondear a 1 decimal
+    double numero2 = Math.round((random.nextDouble() * 10 + 1) * 10.0) / 10.0; // Redondear a 1 decimal
+    respuestaCorrecta = numero1 + numero2;
+    return "¿Cuánto es " + numero1 + " + " + numero2 + "?";
+}
+
 
     private String generarPreguntaFraccion() {
         Random random = new Random();
@@ -144,7 +136,6 @@ public class BienvenidaSwingConFondo extends JFrame {
         int numerador2 = random.nextInt(10) + 1;
         int denominador2 = random.nextInt(10) + 1;
 
-        // Calcular la respuesta correcta
         respuestaCorrectaNumerador = numerador1 * denominador2 + numerador2 * denominador1;
         respuestaCorrectaDenominador = denominador1 * denominador2;
 
@@ -185,6 +176,42 @@ public class BienvenidaSwingConFondo extends JFrame {
         }
         timer = new Timer(1000, e -> segundosTranscurridos++);
         timer.start();
+    }
+
+    private void manejarProgresion(double nivel) {
+        boolean avanzar = false;
+        boolean retroceder = false;
+
+        if (nivel > 5.0) {
+            respuestasConsecutivas++;
+            retrocesosConsecutivos = 0;
+            if (respuestasConsecutivas >= 3) {
+                if (nivelActual < 2) {
+                    nivelActual++;
+                    avanzar = true;
+                }
+                respuestasConsecutivas = 0;
+            }
+        } else if (nivel < 2.5) {
+            retrocesosConsecutivos++;
+            respuestasConsecutivas = 0;
+            if (retrocesosConsecutivos >= 3) {
+                if (nivelActual > 0) {
+                    nivelActual--;
+                    retroceder = true;
+                }
+                retrocesosConsecutivos = 0;
+            }
+        } else {
+            respuestasConsecutivas = 0;
+            retrocesosConsecutivos = 0;
+        }
+
+        if (avanzar) {
+            System.out.println("¡Avanzaste al siguiente nivel! Nivel actual: " + nivelActual);
+        } else if (retroceder) {
+            System.out.println("¡Retrocediste al nivel anterior! Nivel actual: " + nivelActual);
+        }
     }
 
     public static void main(String[] args) {
