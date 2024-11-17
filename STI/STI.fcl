@@ -1,0 +1,46 @@
+FUNCTION_BLOCK DifficultyLevel
+
+VAR_INPUT
+    time : REAL;         // Tiempo acumulado
+    mistakes : REAL;     // Cantidad de errores
+    tips : REAL;         // Cantidad de ayudas
+END_VAR
+
+VAR_OUTPUT
+    level : REAL;        // Nivel de desempeño (0: bajo, 10: alto)
+END_VAR
+
+FUZZIFY time
+    TERM short := (0, 1) (5, 0);    // Poco tiempo es ideal
+    TERM medium := (3, 0) (7, 1) (10, 0);
+    TERM long := (7, 0) (15, 1);    // Mucho tiempo es menos deseable
+END_FUZZIFY
+
+FUZZIFY mistakes
+    TERM few := (0, 1) (1, 0);      // Pocos errores son ideales
+    TERM some := (1, 0) (3, 1) (5, 0);
+    TERM many := (4, 0) (7, 1);     // Muchos errores no son ideales
+END_FUZZIFY
+
+FUZZIFY tips
+    TERM none := (0, 1) (1, 0);     // Sin ayudas es ideal
+    TERM few := (0, 0) (1, 1) (3, 0);
+    TERM many := (2, 0) (5, 1);     // Muchas ayudas indican bajo desempeño
+END_FUZZIFY
+
+DEFUZZIFY level
+    TERM low := (0, 1) (3, 0);      // Nivel bajo de desempeño
+    TERM medium := (2, 0) (5, 1) (7, 0);  // Nivel medio
+    TERM high := (5, 0) (10, 1);    // Nivel alto de desempeño
+    METHOD : COG;  // Método de centroide
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK Rules
+    RULE 1 : IF time IS short AND mistakes IS few AND tips IS none THEN level IS high;   // Menor tiempo, nivel alto
+    RULE 2 : IF time IS medium AND mistakes IS some THEN level IS medium;               // Tiempo moderado, nivel medio
+    RULE 3 : IF time IS long OR mistakes IS many OR tips IS many THEN level IS low;     // Mucho tiempo, nivel bajo
+    RULE 4 : IF time IS medium AND mistakes IS few AND tips IS none THEN level IS medium; // Tiempo moderado con pocos errores
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

@@ -1,10 +1,6 @@
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Random;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 public class BienvenidaSwingConFondo extends JFrame {
 
@@ -13,14 +9,15 @@ public class BienvenidaSwingConFondo extends JFrame {
     private JLabel mensaje;
     private JLabel etiquetaPregunta;
     private JLabel etiquetaRespuestaIncorrecta;
-    private JLabel etiquetaTimer; // Etiqueta para mostrar el cronómetro
-    private JLabel etiquetaErrores; // Etiqueta para mostrar el contador de errores
-    private JLabel etiquetaAyuda; // Etiqueta estilo hipervínculo para ayuda
-    private int respuestaCorrecta;
+    private JLabel etiquetaTimer;
+    private int respuestaCorrectaNumerador;
+    private int respuestaCorrectaDenominador;
+    private double respuestaCorrecta;
     private Image imagenFondo;
     private Timer timer;
     private int segundosTranscurridos;
     private int errores;
+    private int ayudas;
 
     public BienvenidaSwingConFondo() {
         setTitle("Aprender a Sumar");
@@ -67,7 +64,7 @@ public class BienvenidaSwingConFondo extends JFrame {
         botonInicio.setPreferredSize(new Dimension(100, 40));
         botonInicio.setBackground(new Color(255, 182, 193));
         botonInicio.setFocusPainted(false);
-        botonInicio.addActionListener(e -> mostrarPregunta());
+        botonInicio.addActionListener(e -> mostrarPregunta(0)); // Nivel inicial bajo
 
         panelBoton.add(botonInicio);
         panelCentral.add(panelBoton);
@@ -76,151 +73,92 @@ public class BienvenidaSwingConFondo extends JFrame {
         setVisible(true);
     }
 
-    private void mostrarPregunta() {
+    private void mostrarPregunta(double nivel) {
         panelCentral.removeAll();
 
-        JPanel panelContenido = new JPanel();
-        panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
-        panelContenido.setOpaque(false);
+        iniciarCronometro();
 
-        Random random = new Random();
-        int numero1 = random.nextInt(10) + 1;
-        int numero2 = random.nextInt(10) + 1;
-        respuestaCorrecta = numero1 + numero2;
+        String pregunta = "";
 
-        String pregunta = "¿Cuánto es " + numero1 + " + " + numero2 + "?";
+        // Decidir el tipo de pregunta según el nivel
+        if (nivel < 3) {
+            pregunta = generarPreguntaSimple();
+        } else if (nivel < 6) {
+            pregunta = generarPreguntaDecimal();
+        } else {
+            pregunta = generarPreguntaFraccion();
+        }
+
         etiquetaPregunta = new JLabel(pregunta);
         etiquetaPregunta.setFont(new Font("Arial", Font.BOLD, 20));
         etiquetaPregunta.setAlignmentX(Component.CENTER_ALIGNMENT);
         etiquetaPregunta.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        panelContenido.add(etiquetaPregunta);
+        panelCentral.add(etiquetaPregunta);
 
         JTextField campoRespuesta = new JTextField();
         campoRespuesta.setMaximumSize(new Dimension(200, 30));
         campoRespuesta.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        campoRespuesta.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                limpiarMensajeError();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                limpiarMensajeError();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                limpiarMensajeError();
-            }
-        });
-
-        panelContenido.add(campoRespuesta);
+        panelCentral.add(campoRespuesta);
 
         etiquetaRespuestaIncorrecta = new JLabel(" ");
         etiquetaRespuestaIncorrecta.setForeground(Color.RED);
         etiquetaRespuestaIncorrecta.setAlignmentX(Component.CENTER_ALIGNMENT);
-        etiquetaRespuestaIncorrecta.setPreferredSize(new Dimension(200, 20)); // Fijar tamaño de la etiqueta
-        panelContenido.add(etiquetaRespuestaIncorrecta);
-
-        panelContenido.add(Box.createRigidArea(new Dimension(0, 10))); // Espacio adicional debajo del campo de respuesta
+        etiquetaRespuestaIncorrecta.setPreferredSize(new Dimension(200, 20));
+        panelCentral.add(etiquetaRespuestaIncorrecta);
 
         JButton botonEnviar = new JButton("Enviar");
         botonEnviar.setFont(new Font("Arial", Font.PLAIN, 18));
         botonEnviar.setAlignmentX(Component.CENTER_ALIGNMENT);
-        botonEnviar.addActionListener(ev -> verificarRespuesta(campoRespuesta.getText()));
-        panelContenido.add(botonEnviar);
-
-        panelCentral.add(panelContenido);
-
-        // Panel para el cronómetro, la ayuda y el contador de errores en la parte inferior
-        JPanel panelCronometroErrores = new JPanel();
-        panelCronometroErrores.setLayout(new BoxLayout(panelCronometroErrores, BoxLayout.X_AXIS));
-        panelCronometroErrores.setOpaque(false);
-
-        // Cronómetro alineado a la izquierda
-        etiquetaTimer = new JLabel("T: 0s");
-        etiquetaTimer.setFont(new Font("Arial", Font.PLAIN, 14));
-        panelCronometroErrores.add(etiquetaTimer);
-
-        // Espacio flexible para centrar la "Ayuda"
-        panelCronometroErrores.add(Box.createHorizontalGlue());
-
-        // Crear la palabra "Ayuda" como hipervínculo sin un área de clic adicional
-        etiquetaAyuda = new JLabel("<html><u>Ayuda</u></html>");
-        etiquetaAyuda.setFont(new Font("Arial", Font.PLAIN, 14));
-        etiquetaAyuda.setForeground(Color.BLUE);
-        etiquetaAyuda.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        etiquetaAyuda.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                mostrarAyuda();
-            }
+        botonEnviar.addActionListener(ev -> {
+            verificarRespuesta(campoRespuesta.getText());
+            double nuevoNivel = evaluarSistemaDifuso();
+            mostrarPregunta(nuevoNivel); // Mostrar nueva pregunta con el nivel actualizado
         });
-        panelCronometroErrores.add(etiquetaAyuda);
-
-        // Espacio flexible para centrar "Ayuda" entre cronómetro y errores
-        panelCronometroErrores.add(Box.createHorizontalGlue());
-
-        // Errores alineado a la derecha
-        etiquetaErrores = new JLabel("Errores: 0");
-        etiquetaErrores.setFont(new Font("Arial", Font.PLAIN, 14));
-        panelCronometroErrores.add(etiquetaErrores);
-
-        // Añadir el panel inferior al final del panel central
-        panelCentral.add(Box.createVerticalGlue());
-        panelCentral.add(panelCronometroErrores);
-
-        iniciarCronometro();
+        panelCentral.add(botonEnviar);
 
         panelCentral.revalidate();
         panelCentral.repaint();
     }
 
-    private void iniciarCronometro() {
-        segundosTranscurridos = 0;
-        errores = 0;
-        actualizarEtiquetaTimer();
-        actualizarEtiquetaErrores();
-
-        if (timer != null && timer.isRunning()) {
-            timer.stop();
-        }
-
-        timer = new Timer(1000, e -> {
-            segundosTranscurridos++;
-            actualizarEtiquetaTimer();
-        });
-        timer.start();
+    private String generarPreguntaSimple() {
+        Random random = new Random();
+        int numero1 = random.nextInt(20) + 1;
+        int numero2 = random.nextInt(20) + 1;
+        respuestaCorrecta = numero1 + numero2;
+        return "¿Cuánto es " + numero1 + " + " + numero2 + "?";
     }
 
-    private void actualizarEtiquetaTimer() {
-        etiquetaTimer.setText("T: " + segundosTranscurridos + "s");
+    private String generarPreguntaDecimal() {
+        Random random = new Random();
+        double numero1 = Math.round((random.nextDouble() * 10 + 1) * 100.0) / 100.0;
+        double numero2 = Math.round((random.nextDouble() * 10 + 1) * 100.0) / 100.0;
+        respuestaCorrecta = numero1 + numero2;
+        return "¿Cuánto es " + numero1 + " + " + numero2 + "?";
     }
 
-    private void actualizarEtiquetaErrores() {
-        etiquetaErrores.setText("Errores: " + errores);
-    }
+    private String generarPreguntaFraccion() {
+        Random random = new Random();
+        int numerador1 = random.nextInt(10) + 1;
+        int denominador1 = random.nextInt(10) + 1;
+        int numerador2 = random.nextInt(10) + 1;
+        int denominador2 = random.nextInt(10) + 1;
 
-    private void limpiarMensajeError() {
-        etiquetaRespuestaIncorrecta.setText(" ");
+        // Calcular la respuesta correcta
+        respuestaCorrectaNumerador = numerador1 * denominador2 + numerador2 * denominador1;
+        respuestaCorrectaDenominador = denominador1 * denominador2;
+
+        return "¿Cuánto es " + numerador1 + "/" + denominador1 + " + " + numerador2 + "/" + denominador2 + "?";
     }
 
     private void verificarRespuesta(String respuestaUsuario) {
         try {
-            int respuesta = Integer.parseInt(respuestaUsuario.trim());
-            if (respuesta == respuestaCorrecta) {
+            double respuesta = Double.parseDouble(respuestaUsuario.trim());
+            if (Math.abs(respuesta - respuestaCorrecta) < 0.01) {
                 etiquetaPregunta.setText("¡Correcto!");
                 etiquetaRespuestaIncorrecta.setText(" ");
-                timer.stop();
-
-                Timer delay = new Timer(3000, e -> mostrarPregunta());
-                delay.setRepeats(false);
-                delay.start();
             } else {
                 errores++;
-                actualizarEtiquetaErrores();
                 etiquetaRespuestaIncorrecta.setText("Respuesta incorrecta. Intenta de nuevo.");
             }
         } catch (NumberFormatException e) {
@@ -228,10 +166,29 @@ public class BienvenidaSwingConFondo extends JFrame {
         }
     }
 
-    private void mostrarAyuda() {
-        JOptionPane.showMessageDialog(this, "Para resolver la suma, introduce tu respuesta en el campo y presiona 'Enviar'.\n"
-                + "El cronómetro muestra el tiempo que has tomado para responder, y el contador muestra los errores que has cometido.", 
-                "Ayuda", JOptionPane.INFORMATION_MESSAGE);
+    private double evaluarSistemaDifuso() {
+        SistemaDifuso sistema = new SistemaDifuso();
+        System.out.println("Entradas al sistema difuso (antes de enviar):");
+        System.out.println("Tiempo acumulado: " + segundosTranscurridos);
+        System.out.println("Errores acumulados: " + errores);
+        System.out.println("Ayudas acumuladas: " + ayudas);
+
+        double nivel = sistema.obtenerNivel(errores, segundosTranscurridos, ayudas);
+        System.out.println("Nivel obtenido: " + nivel);
+        return nivel;
+    }
+
+    private void iniciarCronometro() {
+        segundosTranscurridos = 0;
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+        }
+        timer = new Timer(1000, e -> segundosTranscurridos++);
+        timer.start();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(BienvenidaSwingConFondo::new);
     }
 
     class PanelRedondeado extends JPanel {
@@ -250,9 +207,5 @@ public class BienvenidaSwingConFondo extends JFrame {
             g2.setColor(getBackground());
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), radio, radio);
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new BienvenidaSwingConFondo());
     }
 }
