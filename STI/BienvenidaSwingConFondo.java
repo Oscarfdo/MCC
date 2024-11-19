@@ -232,6 +232,36 @@ private String generarPista() {
 
    private void verificarRespuesta(String respuestaUsuario) {
     try {
+        // Verificar si la respuesta es una fracción
+        if (nivelActual == 2 && respuestaUsuario.contains("/")) {
+            // Nivel de fracciones: Procesar la respuesta como fracción
+            String[] partes = respuestaUsuario.split("/");
+            if (partes.length == 2) {
+                int numerador = Integer.parseInt(partes[0].trim());
+                int denominador = Integer.parseInt(partes[1].trim());
+
+                // Calcular el valor decimal de la respuesta ingresada
+                double respuestaFraccion = (double) numerador / denominador;
+
+                if (Math.abs(respuestaFraccion - ((double) respuestaCorrectaNumerador / respuestaCorrectaDenominador)) < 0.01) {
+                    etiquetaPregunta.setText("¡Correcto!");
+                    etiquetaPregunta.setForeground(Color.GREEN);
+                    etiquetaRespuestaIncorrecta.setText(" ");
+                    
+                    double nivelDifuso = evaluarSistemaDifuso();
+                    manejarProgresion(nivelDifuso);
+                    mostrarPregunta();
+                } else {
+                    errores++;
+                    etiquetaRespuestaIncorrecta.setText("Respuesta incorrecta. Intenta de nuevo.");
+                    etiquetaRespuestaIncorrecta.setForeground(Color.RED);
+                    etiquetaErrores.setText("Errores: " + errores);
+                }
+                return; // Salir del método si es una fracción
+            }
+        }
+
+        // Nivel de enteros o decimales
         double respuesta = Double.parseDouble(respuestaUsuario.trim());
         if (Math.abs(respuesta - respuestaCorrecta) < 0.01) {
             etiquetaPregunta.setText("¡Correcto!");
@@ -241,14 +271,12 @@ private String generarPista() {
             // Evaluar sistema difuso y cambiar nivel
             double nivelDifuso = evaluarSistemaDifuso();
             manejarProgresion(nivelDifuso);
-
-            // Mostrar una nueva pregunta basada en el nivel actualizado
             mostrarPregunta();
         } else {
-            errores++; // Incrementar errores
+            errores++;
             etiquetaRespuestaIncorrecta.setText("Respuesta incorrecta. Intenta de nuevo.");
             etiquetaRespuestaIncorrecta.setForeground(Color.RED);
-            etiquetaErrores.setText("Errores: " + errores); // Actualizar el contador de errores
+            etiquetaErrores.setText("Errores: " + errores);
         }
     } catch (NumberFormatException e) {
         etiquetaRespuestaIncorrecta.setText("Por favor, ingresa un número válido.");
