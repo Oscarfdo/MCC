@@ -20,6 +20,10 @@ public class BienvenidaSwingConFondo extends JFrame {
     private int nivelActual = 0; // Nivel inicial (0: básico, 1: intermedio, 2: avanzado)
     private int respuestasConsecutivas = 0; // Contador para avanzar de nivel
     private int retrocesosConsecutivos = 0; // Contador para retroceder de nivel
+    private JLabel etiquetaTimer;
+    private JLabel etiquetaErrores; // Nueva etiqueta para mostrar el número de errores
+
+
 
     public BienvenidaSwingConFondo() {
         setTitle("Aprender a Sumar");
@@ -53,6 +57,8 @@ public class BienvenidaSwingConFondo extends JFrame {
         mensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelCentral.add(mensaje);
 
+        
+
         botonInicio = new JButton("Inicio");
         botonInicio.setFont(new Font("Arial", Font.PLAIN, 18));
         botonInicio.setPreferredSize(new Dimension(100, 40));
@@ -67,50 +73,132 @@ public class BienvenidaSwingConFondo extends JFrame {
     }
 
     private void mostrarPregunta() {
-        panelCentral.removeAll();
-        iniciarCronometro();
+    panelCentral.removeAll(); // Limpiar panel central
 
-        String pregunta;
-        if (nivelActual == 0) {
-            pregunta = generarPreguntaSimple();
-        } else if (nivelActual == 1) {
-            pregunta = generarPreguntaDecimal();
-        } else {
-            pregunta = generarPreguntaFraccion();
+    // Reiniciar errores al mostrar una nueva pregunta
+    errores = 0;
+
+    // Panel para los elementos de la pregunta
+    JPanel panelCentro = new JPanel();
+    panelCentro.setLayout(new BoxLayout(panelCentro, BoxLayout.Y_AXIS)); // Diseño vertical
+    panelCentro.setOpaque(false);
+
+    // Generar la pregunta basada en el nivel actual
+    String pregunta;
+    if (nivelActual == 0) {
+        pregunta = generarPreguntaSimple(); // Nivel básico
+    } else if (nivelActual == 1) {
+        pregunta = generarPreguntaDecimal(); // Nivel intermedio
+    } else {
+        pregunta = generarPreguntaFraccion(); // Nivel avanzado
+    }
+
+    // Etiqueta de la pregunta
+    etiquetaPregunta = new JLabel(pregunta);
+    etiquetaPregunta.setFont(new Font("Arial", Font.BOLD, 20));
+    etiquetaPregunta.setAlignmentX(Component.CENTER_ALIGNMENT);
+    etiquetaPregunta.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0)); // Espaciado superior
+    panelCentro.add(etiquetaPregunta);
+
+    // Cuadro de texto para la respuesta
+    JTextField campoRespuesta = new JTextField();
+    campoRespuesta.setMaximumSize(new Dimension(200, 30));
+    campoRespuesta.setAlignmentX(Component.CENTER_ALIGNMENT);
+    campoRespuesta.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1)); // Borde visible
+    panelCentro.add(campoRespuesta);
+
+    // Listener para limpiar el mensaje de error si el usuario escribe algo
+    campoRespuesta.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+        @Override
+        public void insertUpdate(javax.swing.event.DocumentEvent e) {
+            limpiarMensajeError();
         }
 
-        etiquetaPregunta = new JLabel(pregunta);
-        etiquetaPregunta.setFont(new Font("Arial", Font.BOLD, 20));
-        etiquetaPregunta.setAlignmentX(Component.CENTER_ALIGNMENT);
-        etiquetaPregunta.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        panelCentral.add(etiquetaPregunta);
+        @Override
+        public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            limpiarMensajeError();
+        }
 
-        JTextField campoRespuesta = new JTextField();
-        campoRespuesta.setMaximumSize(new Dimension(200, 30));
-        campoRespuesta.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        panelCentral.add(campoRespuesta);
+        @Override
+        public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            limpiarMensajeError();
+        }
 
-        etiquetaRespuestaIncorrecta = new JLabel(" ");
-        etiquetaRespuestaIncorrecta.setForeground(Color.RED);
-        etiquetaRespuestaIncorrecta.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panelCentral.add(etiquetaRespuestaIncorrecta);
+        private void limpiarMensajeError() {
+            etiquetaRespuestaIncorrecta.setText(" ");
+        }
+    });
 
-        JButton botonEnviar = new JButton("Enviar");
-        botonEnviar.setFont(new Font("Arial", Font.PLAIN, 18));
-        botonEnviar.setBackground(new Color(255, 182, 193)); // Fondo rosado
-        botonEnviar.setFocusPainted(false);
-        botonEnviar.setAlignmentX(Component.CENTER_ALIGNMENT);
-        botonEnviar.addActionListener(ev -> {
-            verificarRespuesta(campoRespuesta.getText());
-            double nivelDifuso = evaluarSistemaDifuso();
-            manejarProgresion(nivelDifuso);
-            mostrarPregunta();
-        });
-        panelCentral.add(botonEnviar);
+    // Etiqueta para mostrar mensajes de error
+    etiquetaRespuestaIncorrecta = new JLabel(" ");
+    etiquetaRespuestaIncorrecta.setForeground(Color.RED);
+    etiquetaRespuestaIncorrecta.setAlignmentX(Component.CENTER_ALIGNMENT);
+    etiquetaRespuestaIncorrecta.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaciado inferior
+    panelCentro.add(etiquetaRespuestaIncorrecta);
 
-        panelCentral.revalidate();
-        panelCentral.repaint();
+    // Etiqueta para mostrar el contador de errores
+    etiquetaErrores = new JLabel("Errores: " + errores);
+    etiquetaErrores.setFont(new Font("Arial", Font.PLAIN, 16));
+    etiquetaErrores.setAlignmentX(Component.CENTER_ALIGNMENT);
+    etiquetaErrores.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaciado inferior
+    panelCentro.add(etiquetaErrores);
+
+    // Etiqueta de ayuda interactiva
+    JLabel etiquetaAyuda = new JLabel("Ayuda");
+    etiquetaAyuda.setFont(new Font("Arial", Font.ITALIC, 14));
+    etiquetaAyuda.setForeground(Color.BLUE);
+    etiquetaAyuda.setAlignmentX(Component.CENTER_ALIGNMENT);
+    etiquetaAyuda.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Cambiar cursor al pasar por encima
+    etiquetaAyuda.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent e) {
+            JOptionPane.showMessageDialog(panelCentral, generarPista(), "Pista", JOptionPane.INFORMATION_MESSAGE);
+        }
+    });
+    panelCentro.add(etiquetaAyuda);
+
+    // Botón de envío de respuesta
+    JButton botonEnviar = new JButton("Enviar");
+    botonEnviar.setFont(new Font("Arial", Font.PLAIN, 18));
+    botonEnviar.setBackground(new Color(255, 182, 193));
+    botonEnviar.setFocusPainted(false);
+    botonEnviar.setAlignmentX(Component.CENTER_ALIGNMENT);
+    botonEnviar.addActionListener(ev -> verificarRespuesta(campoRespuesta.getText())); // Validar la respuesta ingresada
+    panelCentro.add(Box.createVerticalStrut(20)); // Espacio entre elementos
+    panelCentro.add(botonEnviar);
+
+    // Añadir los elementos al panel central
+    panelCentral.add(panelCentro, BorderLayout.CENTER);
+
+    // Temporizador debajo de todos los elementos
+    etiquetaTimer = new JLabel("T:0S");
+    etiquetaTimer.setFont(new Font("Arial", Font.PLAIN, 16));
+    etiquetaTimer.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Centrar temporizador
+    panelInferior.setOpaque(false); // Fondo transparente
+    panelInferior.add(etiquetaTimer);
+
+    panelCentral.add(panelInferior, BorderLayout.SOUTH); // Añadir al final del panel
+
+    iniciarCronometro(); // Reiniciar cronómetro
+
+    // Actualizar el panel central
+    panelCentral.revalidate();
+    panelCentral.repaint();
+}
+
+private String generarPista() {
+    if (nivelActual == 0) {
+        return "Suma los números simples. Ejemplo: 5 + 3 = 8.";
+    } else if (nivelActual == 1) {
+        return "Suma números con decimales redondeando al siguiente número si es más fácil.";
+    } else if (nivelActual == 2) {
+        return "Convierte las fracciones a un denominador común antes de sumar.";
     }
+    return "No hay pista disponible.";
+}
+
 
     private String generarPreguntaSimple() {
         Random random = new Random();
@@ -142,77 +230,102 @@ public class BienvenidaSwingConFondo extends JFrame {
         return "¿Cuánto es " + numerador1 + "/" + denominador1 + " + " + numerador2 + "/" + denominador2 + "?";
     }
 
-    private void verificarRespuesta(String respuestaUsuario) {
-        try {
-            double respuesta = Double.parseDouble(respuestaUsuario.trim());
-            if (Math.abs(respuesta - respuestaCorrecta) < 0.01) {
-                etiquetaPregunta.setText("¡Correcto!");
-                etiquetaRespuestaIncorrecta.setText(" ");
-            } else {
-                errores++;
-                etiquetaRespuestaIncorrecta.setText("Respuesta incorrecta. Intenta de nuevo.");
-            }
-        } catch (NumberFormatException e) {
-            etiquetaRespuestaIncorrecta.setText("Por favor, ingresa un número válido.");
+   private void verificarRespuesta(String respuestaUsuario) {
+    try {
+        double respuesta = Double.parseDouble(respuestaUsuario.trim());
+        if (Math.abs(respuesta - respuestaCorrecta) < 0.01) {
+            etiquetaPregunta.setText("¡Correcto!");
+            etiquetaPregunta.setForeground(Color.GREEN);
+            etiquetaRespuestaIncorrecta.setText(" ");
+
+            // Evaluar sistema difuso y cambiar nivel
+            double nivelDifuso = evaluarSistemaDifuso();
+            manejarProgresion(nivelDifuso);
+
+            // Mostrar una nueva pregunta basada en el nivel actualizado
+            mostrarPregunta();
+        } else {
+            errores++; // Incrementar errores
+            etiquetaRespuestaIncorrecta.setText("Respuesta incorrecta. Intenta de nuevo.");
+            etiquetaRespuestaIncorrecta.setForeground(Color.RED);
+            etiquetaErrores.setText("Errores: " + errores); // Actualizar el contador de errores
         }
+    } catch (NumberFormatException e) {
+        etiquetaRespuestaIncorrecta.setText("Por favor, ingresa un número válido.");
+        etiquetaRespuestaIncorrecta.setForeground(Color.RED);
     }
+}
+
+
+
 
     private double evaluarSistemaDifuso() {
-        SistemaDifuso sistema = new SistemaDifuso();
-        System.out.println("Entradas al sistema difuso (antes de enviar):");
-        System.out.println("Tiempo acumulado: " + segundosTranscurridos);
-        System.out.println("Errores acumulados: " + errores);
-        System.out.println("Ayudas acumuladas: " + ayudas);
+    SistemaDifuso sistema = new SistemaDifuso();
+    System.out.println("Entradas al sistema difuso (antes de enviar):");
+    System.out.println("Tiempo acumulado: " + segundosTranscurridos);
+    System.out.println("Errores acumulados: " + errores);
+    System.out.println("Ayudas acumuladas: " + ayudas);
 
-        double nivel = sistema.obtenerNivel(errores, segundosTranscurridos, ayudas);
-        System.out.println("Nivel obtenido: " + nivel);
-        return nivel;
+    double nivel = sistema.obtenerNivel(errores, segundosTranscurridos, ayudas);
+    System.out.println("Nivel obtenido: " + nivel); // Depuración
+    return nivel;
+}
+
+
+  private void iniciarCronometro() {
+    segundosTranscurridos = 0; // Reinicia el contador
+    if (timer != null && timer.isRunning()) {
+        timer.stop();
     }
+    timer = new Timer(1000, e -> {
+        segundosTranscurridos++;
+        etiquetaTimer.setText("T:" + segundosTranscurridos + "S");
+    });
+    timer.start();
+}
 
-    private void iniciarCronometro() {
-        segundosTranscurridos = 0;
-        if (timer != null && timer.isRunning()) {
-            timer.stop();
-        }
-        timer = new Timer(1000, e -> segundosTranscurridos++);
-        timer.start();
-    }
 
-    private void manejarProgresion(double nivel) {
-        boolean avanzar = false;
-        boolean retroceder = false;
 
-        if (nivel > 5.0) {
-            respuestasConsecutivas++;
-            retrocesosConsecutivos = 0;
-            if (respuestasConsecutivas >= 3) {
-                if (nivelActual < 2) {
-                    nivelActual++;
-                    avanzar = true;
-                }
-                respuestasConsecutivas = 0;
+   private void manejarProgresion(double nivel) {
+    boolean avanzar = false;
+    boolean retroceder = false;
+
+    if (nivel > 5.0) { // Nivel alto: avanzar
+        respuestasConsecutivas++;
+        retrocesosConsecutivos = 0;
+        if (respuestasConsecutivas >= 3) { // Avanzar si hay 3 respuestas correctas consecutivas
+            if (nivelActual < 2) { // Máximo nivel es 2
+                nivelActual++;
+                avanzar = true;
             }
-        } else if (nivel < 2.5) {
-            retrocesosConsecutivos++;
-            respuestasConsecutivas = 0;
-            if (retrocesosConsecutivos >= 3) {
-                if (nivelActual > 0) {
-                    nivelActual--;
-                    retroceder = true;
-                }
-                retrocesosConsecutivos = 0;
+            respuestasConsecutivas = 0; // Reiniciar el contador
+        }
+    } else if (nivel < 2.5) { // Nivel bajo: retroceder
+        retrocesosConsecutivos++;
+        respuestasConsecutivas = 0;
+        if (retrocesosConsecutivos >= 3) { // Retroceder si hay 3 incorrectas consecutivas
+            if (nivelActual > 0) { // Mínimo nivel es 0
+                nivelActual--;
+                retroceder = true;
             }
-        } else {
-            respuestasConsecutivas = 0;
-            retrocesosConsecutivos = 0;
+            retrocesosConsecutivos = 0; // Reiniciar el contador
         }
-
-        if (avanzar) {
-            System.out.println("¡Avanzaste al siguiente nivel! Nivel actual: " + nivelActual);
-        } else if (retroceder) {
-            System.out.println("¡Retrocediste al nivel anterior! Nivel actual: " + nivelActual);
-        }
+    } else { // Mantener nivel
+        respuestasConsecutivas = 0;
+        retrocesosConsecutivos = 0;
     }
+
+    // Depuración
+    if (avanzar) {
+        System.out.println("¡Avanzaste al siguiente nivel! Nivel actual: " + nivelActual);
+    } else if (retroceder) {
+        System.out.println("¡Retrocediste al nivel anterior! Nivel actual: " + nivelActual);
+    } else {
+        System.out.println("Te mantienes en el nivel actual: " + nivelActual);
+    }
+}
+
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(BienvenidaSwingConFondo::new);
