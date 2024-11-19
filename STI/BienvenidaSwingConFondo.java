@@ -26,51 +26,55 @@ public class BienvenidaSwingConFondo extends JFrame {
 
 
     public BienvenidaSwingConFondo() {
-        setTitle("Aprender a Sumar");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+    setTitle("Aprender a Sumar");
+    setSize(800, 600);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setLocationRelativeTo(null);
 
-        imagenFondo = new ImageIcon("Recursos/fondo3.png").getImage();
+    //imagenFondo = new ImageIcon("Recursos/fondo3.png").getImage();
+    imagenFondo = new ImageIcon("C:/Users/Reloa/Desktop/MCC/Repositorio/MCC/Recursos/fondo3.png").getImage();
 
-        JPanel panelFondo = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                if (imagenFondo != null) {
-                    g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
-                }
+
+    JPanel panelFondo = new JPanel() {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (imagenFondo != null) {
+                g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
             }
-        };
+        }
+    };
 
-        panelFondo.setLayout(new GridBagLayout());
-        add(panelFondo);
+    panelFondo.setLayout(new GridBagLayout());
+    add(panelFondo);
 
-        panelCentral = new PanelRedondeado(30);
-        panelCentral.setBackground(new Color(173, 216, 230, 230));
-        panelCentral.setPreferredSize(new Dimension(400, 300));
-        panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    panelCentral = new PanelRedondeado(30);
+    panelCentral.setBackground(new Color(173, 216, 230, 230));
+    panelCentral.setPreferredSize(new Dimension(400, 300));
+    panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
+    panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        mensaje = new JLabel("¡Vamos a aprender a sumar!");
-        mensaje.setFont(new Font("Arial", Font.BOLD, 24));
-        mensaje.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panelCentral.add(mensaje);
+    mensaje = new JLabel("¡Vamos a aprender a sumar!");
+    mensaje.setFont(new Font("Arial", Font.BOLD, 24));
+    mensaje.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrar mensaje
+    panelCentral.add(mensaje);
 
-        
+    panelCentral.add(Box.createVerticalGlue()); // Espacio flexible arriba del botón
 
-        botonInicio = new JButton("Inicio");
-        botonInicio.setFont(new Font("Arial", Font.PLAIN, 18));
-        botonInicio.setPreferredSize(new Dimension(100, 40));
-        botonInicio.setBackground(new Color(255, 182, 193)); // Fondo rosado
-        botonInicio.setFocusPainted(false); // Sin contorno al hacer clic
-        botonInicio.addActionListener(e -> mostrarPregunta());
-        panelCentral.add(Box.createRigidArea(new Dimension(0, 50)));
-        panelCentral.add(botonInicio);
+    botonInicio = new JButton("Inicio");
+    botonInicio.setFont(new Font("Arial", Font.PLAIN, 18));
+    botonInicio.setPreferredSize(new Dimension(100, 40));
+    botonInicio.setBackground(new Color(255, 182, 193)); // Fondo rosado
+    botonInicio.setFocusPainted(false); // Sin contorno al hacer clic
+    botonInicio.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrar botón
+    botonInicio.addActionListener(e -> mostrarPregunta());
+    panelCentral.add(botonInicio);
 
-        panelFondo.add(panelCentral);
-        setVisible(true);
-    }
+    panelCentral.add(Box.createVerticalGlue()); // Espacio flexible debajo del botón
+
+    panelFondo.add(panelCentral);
+    setVisible(true);
+}
 
     private void mostrarPregunta() {
     panelCentral.removeAll(); // Limpiar panel central
@@ -97,17 +101,23 @@ public class BienvenidaSwingConFondo extends JFrame {
     etiquetaPregunta = new JLabel(pregunta);
     etiquetaPregunta.setFont(new Font("Arial", Font.BOLD, 20));
     etiquetaPregunta.setAlignmentX(Component.CENTER_ALIGNMENT);
-    etiquetaPregunta.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0)); // Espaciado superior
+    etiquetaPregunta.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
     panelCentro.add(etiquetaPregunta);
 
-    // Cuadro de texto para la respuesta
+    // Campo de respuesta
     JTextField campoRespuesta = new JTextField();
     campoRespuesta.setMaximumSize(new Dimension(200, 30));
     campoRespuesta.setAlignmentX(Component.CENTER_ALIGNMENT);
-    campoRespuesta.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1)); // Borde visible
+    campoRespuesta.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
     panelCentro.add(campoRespuesta);
 
     // Listener para limpiar el mensaje de error si el usuario escribe algo
+    etiquetaRespuestaIncorrecta = new JLabel(" ");
+    etiquetaRespuestaIncorrecta.setForeground(Color.RED);
+    etiquetaRespuestaIncorrecta.setAlignmentX(Component.CENTER_ALIGNMENT);
+    etiquetaRespuestaIncorrecta.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+    panelCentro.add(etiquetaRespuestaIncorrecta);
+
     campoRespuesta.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
         @Override
         public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -125,30 +135,27 @@ public class BienvenidaSwingConFondo extends JFrame {
         }
 
         private void limpiarMensajeError() {
-            etiquetaRespuestaIncorrecta.setText(" ");
+            if (etiquetaRespuestaIncorrecta != null) { // Verifica que no sea null
+                etiquetaRespuestaIncorrecta.setText(" ");
+            }
         }
     });
 
-    // Etiqueta para mostrar mensajes de error
-    etiquetaRespuestaIncorrecta = new JLabel(" ");
-    etiquetaRespuestaIncorrecta.setForeground(Color.RED);
-    etiquetaRespuestaIncorrecta.setAlignmentX(Component.CENTER_ALIGNMENT);
-    etiquetaRespuestaIncorrecta.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaciado inferior
-    panelCentro.add(etiquetaRespuestaIncorrecta);
+    // Botón enviar
+    JButton botonEnviar = new JButton("Enviar");
+    botonEnviar.setFont(new Font("Arial", Font.PLAIN, 18));
+    botonEnviar.setBackground(new Color(255, 182, 193));
+    botonEnviar.setFocusPainted(false);
+    botonEnviar.setAlignmentX(Component.CENTER_ALIGNMENT);
+    botonEnviar.addActionListener(ev -> verificarRespuesta(campoRespuesta.getText()));
+    panelCentro.add(botonEnviar);
 
-    // Etiqueta para mostrar el contador de errores
-    etiquetaErrores = new JLabel("Errores: " + errores);
-    etiquetaErrores.setFont(new Font("Arial", Font.PLAIN, 16));
-    etiquetaErrores.setAlignmentX(Component.CENTER_ALIGNMENT);
-    etiquetaErrores.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Espaciado inferior
-    panelCentro.add(etiquetaErrores);
-
-    // Etiqueta de ayuda interactiva
+    // Etiqueta de ayuda
     JLabel etiquetaAyuda = new JLabel("Ayuda");
     etiquetaAyuda.setFont(new Font("Arial", Font.ITALIC, 14));
     etiquetaAyuda.setForeground(Color.BLUE);
     etiquetaAyuda.setAlignmentX(Component.CENTER_ALIGNMENT);
-    etiquetaAyuda.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Cambiar cursor al pasar por encima
+    etiquetaAyuda.setCursor(new Cursor(Cursor.HAND_CURSOR));
     etiquetaAyuda.addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
         public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -157,29 +164,21 @@ public class BienvenidaSwingConFondo extends JFrame {
     });
     panelCentro.add(etiquetaAyuda);
 
-    // Botón de envío de respuesta
-    JButton botonEnviar = new JButton("Enviar");
-    botonEnviar.setFont(new Font("Arial", Font.PLAIN, 18));
-    botonEnviar.setBackground(new Color(255, 182, 193));
-    botonEnviar.setFocusPainted(false);
-    botonEnviar.setAlignmentX(Component.CENTER_ALIGNMENT);
-    botonEnviar.addActionListener(ev -> verificarRespuesta(campoRespuesta.getText())); // Validar la respuesta ingresada
-    panelCentro.add(Box.createVerticalStrut(20)); // Espacio entre elementos
-    panelCentro.add(botonEnviar);
-
-    // Añadir los elementos al panel central
-    panelCentral.add(panelCentro, BorderLayout.CENTER);
-
-    // Temporizador debajo de todos los elementos
+    // Etiqueta del cronómetro
     etiquetaTimer = new JLabel("T:0S");
     etiquetaTimer.setFont(new Font("Arial", Font.PLAIN, 16));
     etiquetaTimer.setAlignmentX(Component.CENTER_ALIGNMENT);
+    panelCentro.add(etiquetaTimer);
 
-    JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Centrar temporizador
-    panelInferior.setOpaque(false); // Fondo transparente
-    panelInferior.add(etiquetaTimer);
+    // Etiqueta de errores
+    etiquetaErrores = new JLabel("Errores: " + errores);
+    etiquetaErrores.setFont(new Font("Arial", Font.PLAIN, 16));
+    etiquetaErrores.setAlignmentX(Component.CENTER_ALIGNMENT);
+    etiquetaErrores.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+    panelCentro.add(etiquetaErrores);
 
-    panelCentral.add(panelInferior, BorderLayout.SOUTH); // Añadir al final del panel
+    // Agregar el panel al centro
+    panelCentral.add(panelCentro, BorderLayout.CENTER);
 
     iniciarCronometro(); // Reiniciar cronómetro
 
@@ -187,6 +186,7 @@ public class BienvenidaSwingConFondo extends JFrame {
     panelCentral.revalidate();
     panelCentral.repaint();
 }
+
 
 private String generarPista() {
     if (nivelActual == 0) {
