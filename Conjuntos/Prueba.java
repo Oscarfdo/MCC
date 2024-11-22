@@ -79,5 +79,19 @@ public class Prueba{
         System.out.println("El conjunto " + conjuntoUno + " es igual al conjunto "  +
          conjuntoDos + " ? " + conjuntoUno.iguales(conjuntoDos));
         System.out.println();  
+
+        ConjuntoV2 PrimerConjunto = new ConjuntoV2<>("Hola");
+        ConjuntoV2 SegundoConjunto = new ConjuntoV2<>("Adios");
+
+        System.out.println("El conjunto " + PrimerConjunto + " esta vacio? " + PrimerConjunto.isEmpty());
+        System.out.println("El conjunto " + SegundoConjunto + " esta vacio? " + SegundoConjunto.isEmpty());
+
+        System.out.println(PrimerConjunto.toString());
+        System.out.println(SegundoConjunto.toString());
+
+        System.out.println("El conjunto " + PrimerConjunto + " contiene Hola? " + PrimerConjunto.contains("Hola") );
+        System.out.println("El conjunto " + SegundoConjunto + " contiene Adios? " + SegundoConjunto.contains("Adios") );
+        System.out.println("El conunto " + PrimerConjunto + "contiene Adios? " + PrimerConjunto.contains("Adios"));
+        System.out.println("El conjunto " + SegundoConjunto + " contiene Hola? " + SegundoConjunto.contains("Hola") );
     }
 }

@@ -7,32 +7,33 @@ diferentes metodos para conjuntoV2ConjuntoV2<T>*/
 import java.util.HashSet;
 import java.util.Set;
 
-public class ConjuntoV2<T>{
+public class ConjuntoV2<T> {
 
-    private Set<Integer> conjUni = new HashSet<Integer>();
+    private Set<T> conjUni = new HashSet<>();
 
-    private Set<Integer> conj;
+    private Set<T> conj;
 
-    public ConjuntoV2(){
+    public ConjuntoV2() {
         this.conj = new HashSet<>();
     }
 
-    public ConjuntoV2(Set<Integer> conj) {
+    public ConjuntoV2(Set<T> conj) {
         this.conj = conj;
     }
 
-    public ConjuntoV2(T... elementos){
+    @SafeVarargs
+    public ConjuntoV2(T... elementos) {
         this.conj = new HashSet<>();
-        for(T elemento : elementos){
+        for (T elemento : elementos) {
             this.conj.add(elemento);
         }
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return this.conj.isEmpty();
     }
 
-    public boolean contains(int a){
+    public boolean contains(T a) {
         return this.conj.contains(a);
     }
 
@@ -40,82 +41,73 @@ public class ConjuntoV2<T>{
         return conj.containsAll(subConjunto.conj);
     }
 
-    public boolean subSetP(ConjuntoV2<T> subConjunto){
-        boolean state = false;
-
-        conj.containsAll(subConjunto.conj);
-
-        for(Integer elemento: conj){
-            if(!subConjunto.contains(elemento)){
-                state = true;
-            }
-        }
-        return state;
+    public boolean subSetP(ConjuntoV2<T> subConjunto) {
+        return conj.containsAll(subConjunto.conj) && !this.equals(subConjunto);
     }
 
     public ConjuntoV2<T> union(ConjuntoV2<T> conjunto2) {
-        Set<Integer> union = new HashSet<>(conj); 
-        for (Integer elemento : conjunto2.conj) {
+        Set<T> union = new HashSet<>(conj); 
+        for (T elemento : conjunto2.conj) {
             if (!union.contains(elemento)) { 
                 union.add(elemento);    
             }
         }
-        return new ConjuntoV2<T>(union);
+        return new ConjuntoV2<>(union);
     }
 
     public ConjuntoV2<T> interseccion(ConjuntoV2<T> conjunto2) {
-        Set<Integer> interseccion = new HashSet<>();
+        Set<T> interseccion = new HashSet<>();
 
-        for (Integer elemento : conj) {
+        for (T elemento : conj) {
             if (conjunto2.contains(elemento)) {
                 interseccion.add(elemento);
             }
         }
-        return new ConjuntoV2<T>(interseccion);
+        return new ConjuntoV2<>(interseccion);
     }
 
-    public ConjuntoV2<T> diferencia(ConjuntoV2<T> conjunto2){
-        Set<Integer> diferencia = new HashSet<>();
+    public ConjuntoV2<T> diferencia(ConjuntoV2<T> conjunto2) {
+        Set<T> diferencia = new HashSet<>();
 
-        for(Integer elemento : conj){
-            if(!conjunto2.contains(elemento)){
+        for (T elemento : conj) {
+            if (!conjunto2.contains(elemento)) {
                 diferencia.add(elemento);
             }
         }
-        return new ConjuntoV2<T>(diferencia);
+        return new ConjuntoV2<>(diferencia);
     }
 
-    public ConjuntoV2<T> complemento(ConjuntoV2<T> conjUni){
-        Set<Integer> complemento = new HashSet<>();
+    public ConjuntoV2<T> complemento(ConjuntoV2<T> conjUni) {
+        Set<T> complemento = new HashSet<>();
 
-        for(Integer elemento : conjUni.conj){
+        for (T elemento : conjUni.conj) {
             if (!conj.contains(elemento)) {
                 complemento.add(elemento);
             }
         }
-        return new ConjuntoV2<T>(complemento);
+        return new ConjuntoV2<>(complemento);
     }
 
-    public ConjuntoV2<T> clonacion(){
-        Set<Integer> clon = new HashSet<>();
+    public ConjuntoV2<T> clonacion() {
+        Set<T> clon = new HashSet<>();
 
-        for(Integer elemento : conj){
+        for (T elemento : conj) {
             clon.add(elemento);
         }
-        return new ConjuntoV2<T>(clon);
+        return new ConjuntoV2<>(clon);
     }
 
-    public boolean iguales( ConjuntoV2<T> conjuntoB) {
-    return conj.equals(conjuntoB.conj);
+    public boolean iguales(ConjuntoV2<T> conjuntoB) {
+        return conj.equals(conjuntoB.conj);
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         int size = this.conj.size();
         int count = 0;
-        for (Integer elemento : this.conj){
+        for (T elemento : this.conj) {
             sb.append(elemento);
             count++;
             if (count < size) {
